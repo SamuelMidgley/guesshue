@@ -1,11 +1,9 @@
 import { useState } from 'react'
 import { Input, Button, Label } from '@/components/ui'
-import { useUserStore } from '@/stores'
 import { socket } from '@/socket'
 
 export const UserForm = () => {
   const [name, setName] = useState('')
-  const setUser = useUserStore((state) => state.setUser)
 
   return (
     <Label>
@@ -18,7 +16,6 @@ export const UserForm = () => {
         />
         <Button
           onClick={() => {
-            setUser({ name })
             socket.emit('log-in', { id: socket.id, name })
           }}
         >

@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react'
 import { socket } from '@/socket'
-import { Home } from '@/components/Home/Home'
-import { useLobbyStore } from './stores'
+import { useGameStatusStore, useLobbyStore, useUserStore } from './stores'
 import { User } from './types/User'
+import { GameStatus } from './types/GameStatus'
+import { Router } from './components/Router'
 
 export const App = () => {
   const [isConnected, setIsConnected] = useState(socket.connected)
   const setLobby = useLobbyStore((state) => state.setLobby)
+  const setGameStaus = useGameStatusStore((state) => state.setGameStaus)
+  const setUser = useUserStore((state) => state.setUser)
 
   useEffect(() => {
     const onConnect = () => {
@@ -28,14 +31,29 @@ export const App = () => {
 
   useEffect(() => {
     socket.on('lobby', (data: User[]) => {
-      console.log('List received from server:', data)
+      console.log('new lobby list received from server:', data)
+
       setLobby(data)
+    })
+
+    socket.on('game-status', (gameStatus: GameStatus) => {
+      console.log('new game status received from server:', gameStatus)
+
+      setGameStaus(gameStatus)
+    })
+
+    socket.on('logged-in', (user: User) => {
+      console.log('user logged in received from server:', user)
+
+      setUser(user)
     })
 
     return () => {
       socket.off('lobby')
+      socket.off('game-status')
+      socket.off('logged-in')
     }
   }, [])
 
-  return isConnected ? <Home /> : <p>Loading...</p>
+  return isConnected ? <Router /> : <p>Loading...</p>
 }
