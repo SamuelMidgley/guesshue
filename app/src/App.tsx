@@ -9,11 +9,11 @@ export const App = () => {
   const setLobby = useLobbyStore((state) => state.setLobby)
 
   useEffect(() => {
-    function onConnect() {
+    const onConnect = () => {
       setIsConnected(true)
     }
 
-    function onDisconnect() {
+    const onDisconnect = () => {
       setIsConnected(false)
     }
 
@@ -27,13 +27,11 @@ export const App = () => {
   }, [])
 
   useEffect(() => {
-    // Listen for the 'list' event from the server
     socket.on('lobby', (data: User[]) => {
       console.log('List received from server:', data)
       setLobby(data)
     })
 
-    // Clean up the socket connection
     return () => {
       socket.off('lobby')
     }
