@@ -1,19 +1,12 @@
 import express from "express";
-import path from "path";
-import { fileURLToPath } from "url";
 import { Server } from "socket.io";
 import { User } from "./types.js";
 
 let lobby: User[] = [];
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
 const PORT = Number(process.env.PORT) || 3500;
 
 const app = express();
-
-app.use(express.static(path.join(__dirname, "../public")));
 
 const expressServer = app.listen(PORT, () => {
   console.log(`[server]: Server is running at http://localhost:${PORT}`);

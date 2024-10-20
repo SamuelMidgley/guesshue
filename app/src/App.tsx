@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { socket } from '@/socket'
-import { Home } from '@/components/Home'
+import { Home } from '@/components/Home/Home'
 import { useLobbyStore } from './stores'
 import { User } from './types/User'
 
