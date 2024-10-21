@@ -6,8 +6,6 @@ import { Game } from './Game'
 export const Router = () => {
   const gameStatus = useGameStatusStore((state) => state.gameStatus)
 
-  console.log(gameStatus)
-
   switch (gameStatus) {
     case 'lobby':
       return <Lobby />

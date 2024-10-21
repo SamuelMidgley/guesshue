@@ -1,78 +1,139 @@
-import express from "express";
-import { Server } from "socket.io";
-import { User } from "./types";
+import { createServer } from "./createServer";
+import {
+  createNewGame,
+  getCurrentUser,
+  getLobbyById,
+  removeUserById,
+  removeUserFromLobby,
+  updateUserActiveLobby,
+} from "./helper";
+import { Game, Lobby, User, Vote } from "./types";
+const nanoid = require("nanoid");
 
-let lobby: User[] = [];
+let users: User[] = [];
+let lobbies: Lobby[] = [];
 
-const PORT = Number(process.env.PORT) || 3500;
-
-const app = express();
-
-const expressServer = app.listen(PORT, () => {
-  console.log(`[server]: Server is running at http://localhost:${PORT}`);
-});
-
-const io = new Server(expressServer, {
-  cors: {
-    origin: [
-      "http://localhost:5500",
-      "http://127.0.0.1:5500",
-      "http://localhost:4173/",
-      "http://127.0.0.1:4173/",
-      "http://localhost:5173/",
-      "http://127.0.0.1:5173/",
-      "https://guesshue.midgley.dev",
-    ],
-  },
-});
+const io = createServer();
 
 io.on("connection", (socket) => {
   console.log(`User ${socket.id} connected`);
 
-  socket.emit("lobby", lobby);
-
   socket.on("log-in", ({ id, name }: User) => {
-    const newUser = {
+    const newUser: User = {
       id,
       name,
-      isReady: false,
     };
 
-    console.log(id, name);
-    lobby = lobby.concat(newUser);
+    users = users.concat(newUser);
 
     socket.emit("logged-in", newUser);
-    socket.emit("game-status", "lobby");
-    io.emit("lobby", lobby);
   });
 
-  socket.on("is-ready", () => {
-    lobby = lobby.map((user) => {
-      if (user.id === socket.id) {
-        return {
-          ...user,
-          isReady: true,
-        };
+  socket.on("create-lobby", () => {
+    const currentUser = getCurrentUser(users, socket.id);
+
+    if (!currentUser) {
+      console.log(`User with id: ${socket.id} not found`);
+      return;
+    }
+
+    const newLobbyId = nanoid.nanoid();
+
+    const newLobby: Lobby = {
+      id: newLobbyId,
+      users: [currentUser],
+      games: [],
+    };
+
+    lobbies = lobbies.concat(newLobby);
+
+    users = updateUserActiveLobby(users, socket.id, newLobbyId);
+
+    socket.emit("game-status", "lobby");
+    socket.emit("lobby-created", newLobby);
+    socket.join(newLobbyId);
+  });
+
+  socket.on("join-lobby", (lobbyId: string) => {
+    const currentUser = getCurrentUser(users, socket.id);
+
+    if (!currentUser) {
+      console.log(`User with id: ${socket.id} not found`);
+      return;
+    }
+
+    const lobby = getLobbyById(lobbies, lobbyId);
+
+    if (!lobby) {
+      console.log(`Lobby with id: ${lobby} not found`);
+      return;
+    }
+
+    lobbies = lobbies.map((lobby) => {
+      if (lobby.id !== lobbyId) {
+        return lobby;
       }
 
-      return user;
+      return {
+        ...lobby,
+        users: lobby.users.concat(currentUser),
+      };
     });
 
-    io.emit("lobby", lobby);
+    users = updateUserActiveLobby(users, socket.id, lobby.id);
 
-    if (lobby.length > 1 && lobby.every((user) => user.isReady)) {
-      io.emit("game-status", "game");
-    }
+    socket.emit("game-status", "lobby");
+    socket.join(lobby.id);
+    io.to(lobby.id).emit("lobby-updated", getLobbyById(lobbies, lobbyId));
   });
 
-  socket.on("message", (data) => {
-    console.log(data);
-    io.emit("message", `${socket.id.substring(0, 5)}: ${data}`);
-  });
+  // socket.on("is-ready", () => {
+  //   lobby = lobby.map((user) => {
+  //     if (user.id === socket.id) {
+  //       return {
+  //         ...user,
+  //         isReady: true,
+  //       };
+  //     }
+
+  //     return user;
+  //   });
+
+  //   io.emit("lobby", lobby);
+
+  //   if (lobby.length > 1 && lobby.every((user) => user.isReady)) {
+  //     io.emit("game-status", "game");
+
+  //     io.emit("new-game", game);
+  //   }
+  // });
+
+  // socket.on("voted", (vote: Vote) => {
+  //   console.log("user voted ", vote);
+
+  //   game.votes = game.votes.concat(vote);
+
+  //   console.log(game.votes);
+
+  //   io.emit("game-update", game);
+  // });
 
   socket.on("disconnect", () => {
-    lobby = lobby.filter((user) => user.id !== socket.id);
+    const currentUser = getCurrentUser(users, socket.id);
 
-    io.emit("lobby", lobby);
+    if (!currentUser) {
+      console.log(`User with id: ${socket.id} not found`);
+      return;
+    }
+
+    users = removeUserById(users, socket.id);
+
+    if (currentUser.activeLobby) {
+      lobbies = removeUserFromLobby(
+        lobbies,
+        currentUser.activeLobby,
+        currentUser.id
+      );
+    }
   });
 });

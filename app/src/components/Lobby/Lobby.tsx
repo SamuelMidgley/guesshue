@@ -8,9 +8,11 @@ export const Lobby = () => {
 
   return (
     <div>
-      Lobby
-      {lobby.map((user) => (
-        <UserInLobby key={user.id} name={user.name} isReady={user.isReady} />
+      <p>Lobby</p>
+      <p>Password: {lobby.id}</p>
+
+      {lobby.users.map((user) => (
+        <UserInLobby key={user.id} name={user.name} isReady={false} />
       ))}
       <Button
         onClick={() => {

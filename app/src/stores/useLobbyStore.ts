@@ -1,15 +1,19 @@
-import { User } from '@/types/User'
+import { Lobby } from '@/types/Lobby'
 import { create } from 'zustand'
 
 interface LobbyState {
-  lobby: User[]
+  lobby: Lobby
 }
 
 interface LobbyActions {
-  setLobby: (newLobby: User[]) => void
+  setLobby: (newLobby: Lobby) => void
 }
 
 export const useLobbyStore = create<LobbyState & LobbyActions>((set) => ({
-  lobby: [],
+  lobby: {
+    id: '',
+    users: [],
+    games: [],
+  },
   setLobby: (newLobby) => set(() => ({ lobby: newLobby })),
 }))
