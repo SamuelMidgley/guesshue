@@ -1,13 +1,12 @@
 import { createServer } from "./createServer";
 import {
-  createNewGame,
   getCurrentUser,
   getLobbyById,
   removeUserById,
   removeUserFromLobby,
   updateUserActiveLobby,
 } from "./helper";
-import { Game, Lobby, User, Vote } from "./types";
+import { Lobby, User } from "./types";
 const nanoid = require("nanoid");
 
 let users: User[] = [];
