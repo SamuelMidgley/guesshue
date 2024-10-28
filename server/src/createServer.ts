@@ -1,5 +1,20 @@
 import express from "express";
 import { Server } from "socket.io";
+import { User } from "./types";
+
+interface ServerToClientEvents {
+  attemptLogIn: (id: string) => void;
+  basicEmit: (a: number, b: string, c: Buffer) => void;
+  withAck: (d: string, callback: (e: number) => void) => void;
+}
+
+interface ClientToServerEvents {
+  loggedIn: (user: User) => void;
+}
+
+interface InterServerEvents {}
+
+type SocketData = User;
 
 const PORT = Number(process.env.PORT) || 3500;
 
@@ -10,7 +25,12 @@ export const createServer = () => {
     console.log(`[server]: Server is running at http://localhost:${PORT}`);
   });
 
-  return new Server(expressServer, {
+  return new Server<
+    ServerToClientEvents,
+    ClientToServerEvents,
+    InterServerEvents,
+    SocketData
+  >(expressServer, {
     cors: {
       origin: [
         "http://localhost:5500",

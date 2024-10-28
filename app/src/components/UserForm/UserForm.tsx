@@ -16,7 +16,7 @@ export const UserForm = () => {
         />
         <Button
           onClick={() => {
-            socket.emit('log-in', { id: socket.id, name })
+            socket.emit('log-in', { name })
           }}
         >
           Join

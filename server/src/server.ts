@@ -1,90 +1,137 @@
 import { createServer } from "./createServer";
-import {
-  getCurrentUser,
-  getLobbyById,
-  removeUserById,
-  removeUserFromLobby,
-  updateUserActiveLobby,
-} from "./helper";
-import { Lobby, User } from "./types";
+import { gamePlayersTable, gamesTable, usersTable } from "./db/schema";
+import { eq } from "drizzle-orm";
+import { Game, GamePlayer, User } from "./types";
 const nanoid = require("nanoid");
+import "dotenv/config";
+import { drizzle } from "drizzle-orm/libsql";
 
-let users: User[] = [];
-let lobbies: Lobby[] = [];
+const db = drizzle(process.env.DB_FILE_NAME!);
 
 const io = createServer();
 
 io.on("connection", (socket) => {
-  console.log(`User ${socket.id} connected`);
+  console.log(`New connection with socket id: ${socket.id}`);
 
-  socket.on("log-in", ({ id, name }: User) => {
-    const newUser: User = {
-      id,
-      name,
-    };
-
-    users = users.concat(newUser);
-
-    socket.emit("logged-in", newUser);
-  });
-
-  socket.on("create-lobby", () => {
-    const currentUser = getCurrentUser(users, socket.id);
-
-    if (!currentUser) {
-      console.log(`User with id: ${socket.id} not found`);
-      return;
-    }
-
-    const newLobbyId = nanoid.nanoid();
-
-    const newLobby: Lobby = {
-      id: newLobbyId,
-      users: [currentUser],
-      games: [],
-    };
-
-    lobbies = lobbies.concat(newLobby);
-
-    users = updateUserActiveLobby(users, socket.id, newLobbyId);
-
-    socket.emit("game-status", "lobby");
-    socket.emit("lobby-created", newLobby);
-    socket.join(newLobbyId);
-  });
-
-  socket.on("join-lobby", (lobbyId: string) => {
-    const currentUser = getCurrentUser(users, socket.id);
-
-    if (!currentUser) {
-      console.log(`User with id: ${socket.id} not found`);
-      return;
-    }
-
-    const lobby = getLobbyById(lobbies, lobbyId);
-
-    if (!lobby) {
-      console.log(`Lobby with id: ${lobby} not found`);
-      return;
-    }
-
-    lobbies = lobbies.map((lobby) => {
-      if (lobby.id !== lobbyId) {
-        return lobby;
+  // Reads id from local storage and logs in if matching id found
+  socket.on("attemptLogIn", async (id) => {
+    try {
+      if (!id) {
+        console.log("Id not provided");
+        return;
       }
 
-      return {
-        ...lobby,
-        users: lobby.users.concat(currentUser),
-      };
-    });
+      const [user] = await db
+        .select()
+        .from(usersTable)
+        .where(eq(usersTable.id, id));
 
-    users = updateUserActiveLobby(users, socket.id, lobby.id);
+      if (!user) {
+        console.log(`User with id: ${id} does not exist`);
+        return;
+      }
+
+      socket.emit("loggedIn", user);
+      socket.data = user;
+
+      // Need to check if user is part of an ongoing game
+    } catch (error) {
+      console.error(error);
+    }
+  });
+
+  // Creates a new account
+  socket.on("log-in", async ({ name }: User) => {
+    try {
+      const newUserId = nanoid.nanoid();
+
+      const newUser: User = {
+        id: newUserId,
+        name,
+      };
+
+      const [newAddedUser] = await db
+        .insert(usersTable)
+        .values(newUser)
+        .returning();
+      console.log(`New user created with id: ${newAddedUser.id}`);
+
+      socket.emit("logged-in", newAddedUser);
+
+      // Need to check if user is part of an ongoing game
+    } catch (error) {
+      console.error(error);
+    }
+  });
+
+  socket.on("create-game", async () => {
+    // need to type this
+    const user = socket.data;
+    if (!user?.id) {
+      console.log("user not signed in");
+    }
+
+    const password = nanoid.nanoid();
+
+    const newGame: Game = {
+      password: password,
+    };
+
+    const [newAddedGame] = await db
+      .insert(gamesTable)
+      .values(newGame)
+      .returning();
+
+    const newGamePlayer: GamePlayer = {
+      gameId: newAddedGame.id,
+      userId: user.id,
+    };
+
+    const result = await db.insert(gamePlayersTable).values(newGamePlayer);
+
+    if (result.rows.length === 0) {
+      console.log("something went wrong");
+    }
+
+    socket.emit("game-created", newAddedGame);
 
     socket.emit("game-status", "lobby");
-    socket.join(lobby.id);
-    io.to(lobby.id).emit("lobby-updated", getLobbyById(lobbies, lobbyId));
+
+    socket.join(`game-${newAddedGame.id}`);
   });
+
+  // socket.on("join-lobby", (lobbyId: string) => {
+  //   const currentUser = getCurrentUser(users, socket.id);
+
+  //   if (!currentUser) {
+  //     console.log(`User with id: ${socket.id} not found`);
+  //     return;
+  //   }
+
+  //   const lobby = getLobbyById(lobbies, lobbyId);
+
+  //   if (!lobby) {
+  //     console.log(`Lobby with id: ${lobby} not found`);
+  //     return;
+  //   }
+
+  //   lobbies = lobbies.map((lobby) => {
+  //     if (lobby.id !== lobbyId) {
+  //       return lobby;
+  //     }
+
+  //     return {
+  //       ...lobby,
+  //       users: lobby.users.concat(currentUser),
+  //     };
+  //   });
+
+  //   users = updateUserActiveLobby(users, socket.id, lobby.id);
+
+  //   socket.emit("game-status", "lobby");
+  //   socket.join(lobby.id);
+  //   io.to(lobby.id).emit("lobby-updated", getLobbyById(lobbies, lobbyId));
+  // });
 
   // socket.on("is-ready", () => {
   //   lobby = lobby.map((user) => {
@@ -118,21 +165,18 @@ io.on("connection", (socket) => {
   // });
 
   socket.on("disconnect", () => {
-    const currentUser = getCurrentUser(users, socket.id);
-
-    if (!currentUser) {
-      console.log(`User with id: ${socket.id} not found`);
-      return;
-    }
-
-    users = removeUserById(users, socket.id);
-
-    if (currentUser.activeLobby) {
-      lobbies = removeUserFromLobby(
-        lobbies,
-        currentUser.activeLobby,
-        currentUser.id
-      );
-    }
+    // const currentUser = getCurrentUser(users, socket.id);
+    // if (!currentUser) {
+    //   // console.log(`User with id: ${socket.id} not found`);
+    //   return;
+    // }
+    // users = removeUserById(users, socket.id);
+    // if (currentUser.activeLobby) {
+    //   lobbies = removeUserFromLobby(
+    //     lobbies,
+    //     currentUser.activeLobby,
+    //     currentUser.id
+    //   );
+    // }
   });
 });

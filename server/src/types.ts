@@ -1,8 +1,10 @@
-export interface User {
-  id: string;
-  name: string;
-  activeLobby?: string;
-}
+import { gamePlayersTable, gamesTable, usersTable } from "./db/schema";
+
+export type User = typeof usersTable.$inferInsert;
+
+export type Game = typeof gamesTable.$inferInsert;
+
+export type GamePlayer = typeof gamePlayersTable.$inferInsert;
 
 export type GameStatus = "home" | "lobby" | "game" | "results";
 
@@ -18,11 +20,11 @@ export interface Vote {
   isCorrect: boolean;
 }
 
-export interface Game {
-  colorOptions: string[];
-  correctColor: string;
-  votes: Vote[];
-}
+// export interface Game {
+//   colorOptions: string[];
+//   correctColor: string;
+//   votes: Vote[];
+// }
 
 export interface Lobby {
   id: string;

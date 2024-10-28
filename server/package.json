@@ -6,12 +6,16 @@
   "scripts": {
     "start": "tsx watch src/server.ts",
     "start:prod": "node .",
-    "build": "tsc -p ."
+    "build": "tsc -p .",
+    "db:push": "npx drizzle-kit push"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@libsql/client": "^0.14.0",
+    "dotenv": "^16.4.5",
+    "drizzle-orm": "^0.35.3",
     "express": "^4.21.1",
     "nanoid": "^5.0.7",
     "socket.io": "^4.8.0"
@@ -19,6 +23,7 @@
   "devDependencies": {
     "@types/express": "^5.0.0",
     "@types/node": "^22.7.6",
+    "drizzle-kit": "^0.26.2",
     "tsx": "^4.19.1",
     "typescript": "^5.6.3"
   }

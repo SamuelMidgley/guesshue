@@ -1,12 +1,19 @@
 import { socket } from '@/socket'
+import { useUserStore } from '@/stores'
 import { useEffect, useState } from 'react'
 
 export const useHandleSocketConnection = () => {
   const [isConnected, setIsConnected] = useState(socket.connected)
+  const id = useUserStore((state) => state.id)
 
   useEffect(() => {
+    console.log(id)
     const onConnect = () => {
       setIsConnected(true)
+
+      if (id) {
+        socket.emit('attempt-log-in', { id })
+      }
     }
 
     const onDisconnect = () => {
