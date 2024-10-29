@@ -1,4 +1,4 @@
-import { Game, Lobby, RGB, User } from "./types";
+import { RGB, ColorGame } from "../types";
 
 const randInt = (toNum: number): number => {
   return Math.floor(Math.random() * (toNum + 1));
@@ -37,7 +37,7 @@ const getColorList = (correctCount: number): string[] => {
   return [generateRandomRGB(), generateRandomRGB(), generateRandomRGB()];
 };
 
-export const createNewGame = (): Game => {
+export const createNewGame = (): ColorGame => {
   const colorOptions = getColorList(0);
   const correctIdx = randInt(2);
 
@@ -46,50 +46,4 @@ export const createNewGame = (): Game => {
     correctColor: colorOptions[correctIdx],
     votes: [],
   };
-};
-
-export const getCurrentUser = (users: User[], id: string) => {
-  return users.find((user) => user.id === id);
-};
-
-export const removeUserById = (users: User[], id: string) => {
-  return users.filter((user) => user.id !== id);
-};
-
-export const getLobbyById = (lobbies: Lobby[], id: string) => {
-  return lobbies.find((lobby) => lobby.id === id);
-};
-
-export const updateUserActiveLobby = (
-  users: User[],
-  id: string,
-  activeLobby: string | undefined
-) => {
-  return users.map((user) => {
-    if (user.id !== id) {
-      return user;
-    }
-
-    return {
-      ...user,
-      activeLobby,
-    };
-  });
-};
-
-export const removeUserFromLobby = (
-  lobbies: Lobby[],
-  lobbyId: string,
-  userId: string
-) => {
-  return lobbies.map((lobby) => {
-    if (lobby.id !== lobbyId) {
-      return lobby;
-    }
-
-    return {
-      ...lobby,
-      users: lobby.users.filter((user) => user.id !== userId),
-    };
-  });
 };

@@ -1,22 +1,14 @@
 import express from "express";
 import { Server } from "socket.io";
-import { User } from "./types";
 
-interface ServerToClientEvents {
-  attemptLogIn: (id: string) => void;
-  basicEmit: (a: number, b: string, c: Buffer) => void;
-  withAck: (d: string, callback: (e: number) => void) => void;
-}
+import {
+  ClientToServerEvents,
+  InterServerEvents,
+  ServerToClientEvents,
+  SocketData,
+} from "./types/server";
 
-interface ClientToServerEvents {
-  loggedIn: (user: User) => void;
-}
-
-interface InterServerEvents {}
-
-type SocketData = User;
-
-const PORT = Number(process.env.PORT) || 3500;
+const PORT = Number(process.env.PORT) || 5500;
 
 export const createServer = () => {
   const app = express();
@@ -26,21 +18,13 @@ export const createServer = () => {
   });
 
   return new Server<
-    ServerToClientEvents,
     ClientToServerEvents,
+    ServerToClientEvents,
     InterServerEvents,
     SocketData
   >(expressServer, {
     cors: {
-      origin: [
-        "http://localhost:5500",
-        "http://127.0.0.1:5500",
-        "http://localhost:4173/",
-        "http://127.0.0.1:4173/",
-        "http://localhost:5173/",
-        "http://127.0.0.1:5173/",
-        "https://guesshue.midgley.dev",
-      ],
+      origin: "*",
     },
   });
 };

@@ -13,15 +13,23 @@ export const gamesTable = sqliteTable("games", {
 
 export const gamePlayersTable = sqliteTable("game_players", {
   id: int().primaryKey({ autoIncrement: true }),
-  userId: text("user_id").references(() => usersTable.id),
-  gameId: int("game_id").references(() => gamesTable.id),
-  isReady: int("is_ready", { mode: "boolean" }).default(false),
+  userId: text("user_id")
+    .notNull()
+    .references(() => usersTable.id),
+  gameId: int("game_id")
+    .notNull()
+    .references(() => gamesTable.id),
+  isReady: int("is_ready", { mode: "boolean" }).notNull().default(false),
 });
 
 export const gameGuessesTable = sqliteTable("game_guesses_table", {
   id: int().primaryKey({ autoIncrement: true }),
-  userId: text("user_id").references(() => usersTable.id),
-  gameId: int("game_id").references(() => gamesTable.id),
+  userId: text("user_id")
+    .notNull()
+    .references(() => usersTable.id),
+  gameId: int("game_id")
+    .notNull()
+    .references(() => gamesTable.id),
   round: int().notNull(),
   isCorrect: int("is_correct", { mode: "boolean" }),
 });
