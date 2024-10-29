@@ -1,7 +1,15 @@
 export interface Game {
-  colorOptions: string[]
-  correctColor: string
-  votes: Vote[]
+  id: number
+  password: string
+  winner: string | null
+}
+
+export interface GamePlayer {
+  id: number
+  gameId: number
+  userId: string
+  name: string
+  isReady: boolean
 }
 
 export interface Vote {

@@ -9,62 +9,54 @@ import {
 import { User } from './types/User'
 import { GameStatus } from './types/GameStatus'
 import { Router } from './components/Router'
-import { Game } from './types/Game'
-import { Lobby } from './types/Lobby'
+import { Game, GamePlayer } from './types/Game'
 import { useHandleSocketConnection } from './hooks'
 
 export const App = () => {
-  const setLobby = useLobbyStore((state) => state.setLobby)
   const setGameStaus = useGameStatusStore((state) => state.setGameStaus)
   const setUser = useUserStore((state) => state.setUser)
   const setGame = useGameStore((state) => state.setGame)
+  const setGamePlayers = useGameStore((state) => state.setGamePlayers)
 
   const isConnected = useHandleSocketConnection()
 
   useEffect(() => {
-    socket.on('game-status', (gameStatus: GameStatus) => {
+    socket.on('gameStatus', (gameStatus: GameStatus) => {
       console.log('new game status received from server:', gameStatus)
 
       setGameStaus(gameStatus)
     })
 
-    socket.on('logged-in', (user: User) => {
+    socket.on('loggedIn', (user: User) => {
       console.log('user logged in received from server:', user)
 
       setUser(user)
     })
 
-    socket.on('new-game', (game: Game) => {
+    socket.on('gameCreated', (game: Game) => {
       console.log('new game received from server:', game)
 
       setGame(game)
     })
 
-    socket.on('game-update', (game: Game) => {
-      console.log('game update received from server:', game)
+    socket.on('gameJoined', (game: Game) => {
+      console.log('joined game received from server:', game)
 
       setGame(game)
     })
 
-    socket.on('lobby-created', (lobby: Lobby) => {
-      console.log('new lobby created and received from server:', lobby)
+    socket.on('gamePlayersUpdated', (gamePlayers: GamePlayer[]) => {
+      console.log('new game players have joined', gamePlayers)
 
-      setLobby(lobby)
-    })
-
-    socket.on('lobby-updated', (lobby: Lobby) => {
-      console.log('updated lobby received from server:', lobby)
-
-      setLobby(lobby)
+      setGamePlayers(gamePlayers)
     })
 
     return () => {
-      socket.off('lobby')
-      socket.off('game-status')
-      socket.off('logged-in')
-      socket.off('new-game')
-      socket.off('lobby-created')
-      socket.off('lobby-updated')
+      socket.off('gameCreated')
+      socket.off('gameStatus')
+      socket.off('loggedIn')
+      socket.off('gamePlayersUpdated')
+      socket.off('gameJoined')
     }
   }, [])
 

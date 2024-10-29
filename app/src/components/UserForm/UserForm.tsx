@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Input, Button, Label } from '@/components/ui'
-import { socket } from '@/socket'
+import { logInHandler } from '@/socket'
 
 export const UserForm = () => {
   const [name, setName] = useState('')
@@ -16,7 +16,7 @@ export const UserForm = () => {
         />
         <Button
           onClick={() => {
-            socket.emit('log-in', { name })
+            logInHandler(name)
           }}
         >
           Join

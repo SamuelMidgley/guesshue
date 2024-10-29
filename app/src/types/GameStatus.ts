@@ -1,1 +1,1 @@
-export type GameStatus = 'home' | 'lobby' | 'game' | 'results'
+export type GameStatus = 'home' | 'lobby' | 'game' | 'results' | 'not-found'

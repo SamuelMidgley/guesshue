@@ -1,18 +1,27 @@
-import { useLobbyStore } from '@/stores'
+import { useGameStore } from '@/stores'
 import { UserInLobby } from './UserInLobby'
 // import { Button } from '../ui'
 // import { socket } from '@/socket'
 
 export const Lobby = () => {
-  const lobby = useLobbyStore((store) => store.lobby)
+  const game = useGameStore((store) => store.game)
+  const gamePlayers = useGameStore((store) => store.gamePlayers)
+
+  if (!game) {
+    return null
+  }
 
   return (
     <div>
       <p>Lobby</p>
-      <p>Password: {lobby.id}</p>
+      <p>Password: {game?.password}</p>
 
-      {lobby.users.map((user) => (
-        <UserInLobby key={user.id} name={user.name} isReady={false} />
+      {gamePlayers.map((player) => (
+        <UserInLobby
+          key={player.id}
+          name={player.name}
+          isReady={player.isReady}
+        />
       ))}
       {/* <Button
         onClick={() => {

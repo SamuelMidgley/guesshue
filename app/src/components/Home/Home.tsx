@@ -2,20 +2,12 @@ import { useState } from 'react'
 import { UserForm } from '@/components/UserForm/UserForm'
 import { useUserStore } from '@/stores'
 import { Button, Input, Label } from '@/components/ui'
-import { socket } from '@/socket'
+import { createGameHandler, joinGameHandler } from '@/socket'
 
 export const Home = () => {
   const name = useUserStore((state) => state.name)
   const [isJoining, setIsJoining] = useState(false)
-  const [lobbyName, setLobbyName] = useState('')
-
-  const createLobbyHandler = () => {
-    socket.emit('create-lobby')
-  }
-
-  const joinLobbyHandler = () => {
-    socket.emit('join-lobby', lobbyName)
-  }
+  const [password, setPassword] = useState('')
 
   if (!name) {
     return (
@@ -31,23 +23,25 @@ export const Home = () => {
       <h1 className="text-xl font-bold">Welcome {name}!</h1>
       {!isJoining ? (
         <div className="flex items-center gap-4">
-          <Button onClick={() => setIsJoining(true)}>Join Lobby</Button> or
-          <Button onClick={() => createLobbyHandler()}>Create Lobby</Button>
+          <Button onClick={() => setIsJoining(true)}>Join Game</Button> or
+          <Button onClick={() => createGameHandler()}>Create Game</Button>
         </div>
       ) : (
         <div className="w-fit">
           <Label>
-            Lobby password
+            Game password
             <span className="flex items-center gap-2 w-[500px]">
               <Input
-                value={lobbyName}
-                onChange={(e) => setLobbyName(e.target.value)}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
-              <Button onClick={() => joinLobbyHandler()}>Join Lobby</Button>
+              <Button onClick={() => joinGameHandler(password)}>
+                Join Game
+              </Button>
             </span>
           </Label>
           <div className="w-full flex justify-center">
-            <Button variant="link" onClick={() => createLobbyHandler()}>
+            <Button variant="link" onClick={() => createGameHandler()}>
               Create Lobby
             </Button>
           </div>

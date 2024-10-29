@@ -12,7 +12,7 @@ export const useHandleSocketConnection = () => {
       setIsConnected(true)
 
       if (id) {
-        socket.emit('attempt-log-in', { id })
+        socket.emit('attemptLogIn', id)
       }
     }
 
