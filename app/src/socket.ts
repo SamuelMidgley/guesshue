@@ -15,3 +15,7 @@ export const createGameHandler = () => {
 export const joinGameHandler = (password: string) => {
   socket.emit('joinGame', password)
 }
+
+export const isReadyHandler = () => {
+  socket.emit('isReady')
+}

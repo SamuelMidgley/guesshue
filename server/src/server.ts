@@ -13,9 +13,9 @@ export const io = createServer();
 io.on("connection", (socket) => {
   console.log("New connection established");
 
+  connectionHandler(socket);
+
   authHandler(socket);
 
   gameHandler(socket);
-
-  connectionHandler(socket);
 });

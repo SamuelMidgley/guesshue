@@ -4,9 +4,10 @@ import { Game, GamePlayer, GameStatus } from "./game";
 
 export interface ClientToServerEvents {
   attemptLogIn: (id: string) => void;
-  logIn: (name: string) => void;
+  logIn: (password: string) => void;
   createGame: () => void;
   joinGame: (password: string) => void;
+  isReady: () => void;
 }
 
 export interface ServerToClientEvents {

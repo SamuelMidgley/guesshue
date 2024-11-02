@@ -24,7 +24,7 @@ export const createServer = () => {
     SocketData
   >(expressServer, {
     cors: {
-      origin: "*",
+      origin: "*", // todo: set this up
     },
   });
 };

@@ -22,6 +22,7 @@ export const logInHandler = (socket: SocketType) => {
       console.log(`New user created with id: ${newAddedUser.id}`);
 
       socket.emit("loggedIn", newAddedUser);
+      socket.data = newAddedUser;
     } catch (error) {
       console.error(error);
     }

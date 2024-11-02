@@ -1,18 +1,17 @@
-export const isReadyHandler = () => {
-  //   socket.on("is-ready", () => {
-  //     lobby = lobby.map((user) => {
-  //       if (user.id === socket.id) {
-  //         return {
-  //           ...user,
-  //           isReady: true,
-  //         };
-  //       }
-  //       return user;
-  //     });
-  //     io.emit("lobby", lobby);
-  //     if (lobby.length > 1 && lobby.every((user) => user.isReady)) {
-  //       io.emit("game-status", "game");
-  //       io.emit("new-game", game);
-  //     }
-  //   });
+import { SocketType } from "../../../types";
+
+export const isReadyHandler = (socket: SocketType) => {
+  socket.on("isReady", () => {
+    const user = socket.data;
+    if (!user?.id) {
+      console.log("user not signed in");
+      return;
+    }
+
+    // check user is part of a game and that the game is not over / started
+
+    // mark player as ready
+
+    // emit game player updates
+  });
 };

@@ -1,2 +1,3 @@
-export { getGameRoomName } from "./getGameRoomName";
-export { nanoid } from "./nanoid";
+export * from "./game";
+export * from "./nanoid";
+export * from "./color";

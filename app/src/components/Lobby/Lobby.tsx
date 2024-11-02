@@ -1,7 +1,7 @@
 import { useGameStore } from '@/stores'
 import { UserInLobby } from './UserInLobby'
-// import { Button } from '../ui'
-// import { socket } from '@/socket'
+import { Button } from '../ui'
+import { socket } from '@/socket'
 
 export const Lobby = () => {
   const game = useGameStore((store) => store.game)
@@ -23,13 +23,13 @@ export const Lobby = () => {
           isReady={player.isReady}
         />
       ))}
-      {/* <Button
+      <Button
         onClick={() => {
           socket.emit('is-ready')
         }}
       >
         Ready
-      </Button> */}
+      </Button>
     </div>
   )
 }
