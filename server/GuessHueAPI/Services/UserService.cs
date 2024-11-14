@@ -23,11 +23,19 @@ public class UserService(IUserRepository userRepository) : IUserService
 
     public async Task<User?> GetById(int id)
     {
-        var user = await userRepository.GetById(id);
+        try
+        {
+            var user = await userRepository.GetById(id);
 
-        if (user == null) throw new KeyNotFoundException("User not found");
+            if (user == null) throw new KeyNotFoundException("User not found");
 
-        return user;
+            return user;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
     public async Task<User?> GetByEmail(string email)

@@ -17,7 +17,7 @@ export const useThemeStore = create<ThemeState & ThemeActions>()(
   persist(
     (set) => ({
       theme: isDarkMode() ? 'dark' : 'light',
-      setTheme: (theme) => set(() => ({ theme: theme })),
+      setTheme: (theme) => set(() => ({ theme })),
     }),
     {
       name: 'theme-store',

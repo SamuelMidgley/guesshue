@@ -18,6 +18,8 @@ builder.Services.AddScoped<IPasswordSecurityService, PasswordSecurityService>();
 
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
+builder.Services.AddCors();
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -81,6 +83,12 @@ if (app.Environment.IsDevelopment())
 app.UseMiddleware<ErrorHandlerMiddleware>();
 
 // app.UseHttpsRedirection();
+app.UseCors(x => x
+    .AllowAnyMethod()
+    .AllowAnyHeader()
+    .SetIsOriginAllowed(origin => true) // allow any origin
+    //.WithOrigins("https://localhost:44351")); // Allow only this origin can also have multiple origins separated with comma
+    .AllowCredentials());
 
 app.UseAuthentication();
 app.UseAuthorization();

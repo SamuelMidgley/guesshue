@@ -4,7 +4,8 @@ import { useThemeStore } from '@/stores/useThemeStore'
 import { Button } from '../ui/button'
 
 export function ModeToggle() {
-  const { theme, setTheme } = useThemeStore()
+  const theme = useThemeStore((state) => state.theme)
+  const setTheme = useThemeStore((state) => state.setTheme)
 
   return (
     <Button

@@ -1,7 +1,14 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-import { Root } from './Root'
+import { Root } from './components/root'
 import { Profile } from './pages/profile'
 import { Home } from './pages/home'
+import { Login } from './pages/login'
+import Register from './pages/register'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { Settings } from './pages/settings'
+import { Leaderboards } from './pages/leaderboards'
+
+const queryClient = new QueryClient()
 
 const router = createBrowserRouter([
   {
@@ -11,11 +18,11 @@ const router = createBrowserRouter([
     children: [
       {
         path: 'login',
-        element: <Home />,
+        element: <Login />,
       },
       {
         path: 'register',
-        element: <Home />,
+        element: <Register />,
       },
       {
         path: '',
@@ -25,10 +32,22 @@ const router = createBrowserRouter([
         path: 'profile/:id',
         element: <Profile />,
       },
+      {
+        path: 'settings',
+        element: <Settings />,
+      },
+      {
+        path: 'leaderboards',
+        element: <Leaderboards />,
+      },
     ],
   },
 ])
 
 export const App = () => {
-  return <RouterProvider router={router} />
+  return (
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router} />
+    </QueryClientProvider>
+  )
 }

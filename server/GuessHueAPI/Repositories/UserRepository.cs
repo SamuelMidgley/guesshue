@@ -54,7 +54,7 @@ public class UserRepository(DataContext context) : IUserRepository
                            WHERE id = @id
                            """;
 
-        return await connection.QuerySingleOrDefaultAsync<User>(sql, id);
+        return await connection.QueryFirstOrDefaultAsync<User>(sql, new { id });
     }
 
     public async Task<int> Create(CreateUser user)

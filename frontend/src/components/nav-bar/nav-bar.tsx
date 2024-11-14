@@ -1,12 +1,8 @@
-import { useState } from 'react'
-import { UserActions } from './user-actions'
 import { UserNav } from './user-nav'
 import { ModeToggle } from './mode-toggle'
 import { MainNav } from './main-nav'
 
 export const NavBar = () => {
-  const [isLoggedIn] = useState(true)
-
   return (
     <div className="hidden flex-col md:flex">
       <div className="border-b">
@@ -24,7 +20,7 @@ export const NavBar = () => {
           <MainNav />
           <div className="ml-auto flex items-center space-x-4">
             <ModeToggle />
-            {isLoggedIn ? <UserNav /> : <UserActions />}
+            <UserNav />
           </div>
         </div>
       </div>

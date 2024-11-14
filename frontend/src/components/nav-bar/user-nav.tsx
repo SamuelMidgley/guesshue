@@ -10,8 +10,32 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Link } from 'react-router-dom'
+import { UserActions } from './user-actions'
+import { useMeQuery } from '@/services/user'
+import { useAuthStore } from '@/stores/useAuthStore'
 
-export function UserNav() {
+export const UserNav = () => {
+  const isLoggedIn = useAuthStore((state) => !!state.token)
+  const logOut = useAuthStore((state) => state.logOut)
+
+  const { data, isLoading, isError } = useMeQuery()
+
+  if (!isLoggedIn) {
+    return <UserActions />
+  }
+
+  if (isLoading || !data || isError) {
+    return (
+      <div className='className="relative h-8 w-8 rounded-full"'>
+        <Avatar className="relative flex shrink-0 overflow-hidden rounded-full h-8 w-8 items-center justify-center">
+          <AvatarFallback></AvatarFallback>
+        </Avatar>
+      </div>
+    )
+  }
+
+  const { id, username, email } = data
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -22,28 +46,30 @@ export function UserNav() {
               src="https://avatars.githubusercontent.com/u/124599?v=4"
               alt="@shadcn"
             />
-            <AvatarFallback>SM</AvatarFallback>
+            <AvatarFallback>{username[0]}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">shadcn</p>
+            <p className="text-sm font-medium leading-none">{username}</p>
             <p className="text-xs leading-none text-muted-foreground">
-              m@example.com
+              {email}
             </p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem asChild>
-            <Link to="profile/1">Profile</Link>
+            <Link to={`/profile/${id}`}>Profile</Link>
           </DropdownMenuItem>
-          <DropdownMenuItem>Settings</DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link to="/settings">Settings</Link>
+          </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>Log out</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => logOut()}>Log out</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )
