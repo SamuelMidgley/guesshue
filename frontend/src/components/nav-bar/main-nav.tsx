@@ -109,7 +109,7 @@ export function MainNav() {
           </NavigationMenuContent>
         </NavigationMenuItem> */}
         <NavigationMenuItem>
-          <Link to="/leaderboards ">
+          <Link to="/leaderboards">
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
               Leaderboards
             </NavigationMenuLink>
