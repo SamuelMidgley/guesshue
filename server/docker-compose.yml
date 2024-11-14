@@ -3,7 +3,7 @@
     image: guesshueapi
     build:
       context: .
-      dockerfile: server/GuessHueAPI/Dockerfile
+      dockerfile: GuessHueAPI/Dockerfile
     ports:
       - "8080:8080"
       - "8081:8081"
@@ -17,7 +17,7 @@
     image: guesshuemigrations
     build:
       context: .
-      dockerfile: server/GuessHueMigrations/Dockerfile
+      dockerfile: GuessHueMigrations/Dockerfile
     environment:
       - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=guesshue;Username=postgres;Password=${DB_PASSWORD}
     depends_on:
