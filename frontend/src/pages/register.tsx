@@ -39,7 +39,7 @@ const formSchema = z
     }
   })
 
-export default function Register() {
+export function Register() {
   const { mutate } = useRegisterMutation()
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),

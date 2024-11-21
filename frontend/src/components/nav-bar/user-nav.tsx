@@ -13,12 +13,21 @@ import { Link } from 'react-router-dom'
 import { UserActions } from './user-actions'
 import { useMeQuery } from '@/services/user'
 import { useAuthStore } from '@/stores/useAuthStore'
+import { useUserStore } from '@/stores'
+import { useEffect } from 'react'
 
 export const UserNav = () => {
-  const isLoggedIn = useAuthStore((state) => !!state.token)
+  const isLoggedIn = useUserStore((state) => !!state.user)
   const logOut = useAuthStore((state) => state.logOut)
+  const setUser = useUserStore((state) => state.setUser)
 
   const { data, isLoading, isError } = useMeQuery()
+
+  useEffect(() => {
+    if (data) {
+      setUser(data)
+    }
+  }, [data, setUser])
 
   if (!isLoggedIn) {
     return <UserActions />

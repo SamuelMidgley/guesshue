@@ -1,44 +1,99 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-import { Root } from './components/root'
-import { Profile } from './pages/profile'
-import { Home } from './pages/home'
-import { Login } from './pages/login'
-import Register from './pages/register'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { Settings } from './pages/settings'
-import { Leaderboards } from './pages/leaderboards'
+import {
+  MutationCache,
+  QueryCache,
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query'
+import { AxiosError } from 'axios'
+import { useAuthStore } from './stores/useAuthStore'
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+      retry: 1,
+      retryDelay: 3000,
+    },
+  },
+  queryCache: new QueryCache({
+    onError: (TError) => {
+      const error = TError as AxiosError
+
+      if (error.status === 404) {
+        useAuthStore.getState().logOut()
+      }
+    },
+  }),
+  mutationCache: new MutationCache({
+    onError: (TError) => {
+      const error = TError as AxiosError
+
+      if (error.status === 404) {
+        useAuthStore.getState().logOut()
+      }
+    },
+  }),
+})
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <Root />,
+    async lazy() {
+      const { Root } = await import('./components/root')
+      return { Component: Root }
+    },
     // loader: rootLoader,
     children: [
       {
         path: 'login',
-        element: <Login />,
+        async lazy() {
+          const { Login } = await import('./pages/login')
+          return { Component: Login }
+        },
       },
       {
         path: 'register',
-        element: <Register />,
+        async lazy() {
+          const { Register } = await import('./pages/register')
+          return { Component: Register }
+        },
       },
       {
         path: '',
-        element: <Home />,
+        async lazy() {
+          const { Home } = await import('./pages/home')
+          return { Component: Home }
+        },
       },
       {
         path: 'profile/:id',
-        element: <Profile />,
+        async lazy() {
+          const { Profile } = await import('./pages/profile')
+          return { Component: Profile }
+        },
       },
       {
         path: 'settings',
-        element: <Settings />,
+        async lazy() {
+          const { Settings } = await import('./pages/settings')
+          return { Component: Settings }
+        },
       },
       {
         path: 'leaderboards',
-        element: <Leaderboards />,
+        async lazy() {
+          const { Leaderboards } = await import('./pages/leaderboards')
+          return { Component: Leaderboards }
+        },
+      },
+      {
+        path: 'game',
+        async lazy() {
+          const { Game } = await import('./pages/game')
+          return { Component: Game }
+        },
       },
     ],
   },
