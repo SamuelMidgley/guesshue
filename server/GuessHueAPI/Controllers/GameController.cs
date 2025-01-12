@@ -8,13 +8,13 @@ namespace GuessHueAPI.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class GameController(IGameService gameService) : ControllerBase
+public class GameController(IGameService gameService, IUserHelper userHelper) : ControllerBase
 {
     [Authorize]
     [HttpGet]
     public async Task<ActionResult<Game>> CreateGame()
     {
-        var userId = await UserHelper.GetUserIdFromToken(Request.HttpContext);
+        var userId = await userHelper.GetUserIdFromHttpContext(Request.HttpContext);
 
         if (!userId.HasValue)
         {
@@ -28,10 +28,9 @@ public class GameController(IGameService gameService) : ControllerBase
     
     [Authorize]
     [HttpPost("{gameId:int}/guess")]
-
     public async Task<IActionResult> AddGuess(int gameId, AddGuessRequest request)
     {
-        var userId = await UserHelper.GetUserIdFromToken(Request.HttpContext);
+        var userId = await userHelper.GetUserIdFromHttpContext(Request.HttpContext);
 
         if (!userId.HasValue)
         {

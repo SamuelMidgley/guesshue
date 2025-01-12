@@ -3,9 +3,14 @@ using Microsoft.AspNetCore.Authentication;
 
 namespace GuessHueAPI.Helpers;
 
-public static class UserHelper
+public interface IUserHelper
 {
-    public static async Task<int?> GetUserIdFromToken(HttpContext httpContext)
+    Task<int?> GetUserIdFromHttpContext(HttpContext httpContext);
+}
+
+public class UserHelper: IUserHelper
+{
+    public async Task<int?> GetUserIdFromHttpContext(HttpContext httpContext)
     {
         var jwt = await httpContext.GetTokenAsync("access_token");
 
