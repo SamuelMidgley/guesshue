@@ -1,11 +1,8 @@
-export interface User {
+export interface UserLeaderboardRow {
   id: number
   username: string
-  email: string
   dateCreated: Date
-}
-
-export interface UserWithIcon extends User {
   firstColor: string
   secondColor: string
+  stat: number
 }

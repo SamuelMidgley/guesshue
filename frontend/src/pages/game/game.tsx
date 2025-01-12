@@ -1,23 +1,20 @@
 import { Loader } from '@/components/loader'
-import { Button } from '@/components/ui'
 import { useGetGame, useSubmitGuess } from '@/services/game'
 import { useState } from 'react'
+import { ColorGuess } from './color-guess'
 
 export const Game = () => {
-  const { data, refetch } = useGetGame()
+  const { data: game, refetch } = useGetGame()
   const { mutate: submitGuess } = useSubmitGuess()
 
   const [numCorrect, setNumCorrect] = useState(0)
 
-  if (!data) {
+  if (!game) {
     return <Loader />
   }
 
   const handleVote = (guess: string) => {
-    console.log(guess)
-    console.log(data.correctColor)
-    console.log(numCorrect)
-    if (guess === data.correctColor) {
+    if (guess === game.correctColor) {
       setNumCorrect((prev) => prev + 1)
     } else {
       setNumCorrect(0)
@@ -25,7 +22,7 @@ export const Game = () => {
 
     submitGuess(
       {
-        gameId: data.id,
+        gameId: game.id,
         colorGuess: guess,
       },
       {
@@ -37,25 +34,6 @@ export const Game = () => {
   }
 
   return (
-    <div className="w-full flex flex-col gap-6 items-center mt-20">
-      <div
-        className="w-[200px] h-[200px] rounded"
-        style={{ backgroundColor: data.correctColor }}
-      />
-      <div className="flex gap-4">
-        {[data.optionOne, data.optionTwo, data.optionThree].map((option) => (
-          <Button
-            key={option}
-            variant="outline"
-            onClick={() => handleVote(option)}
-          >
-            {option}
-          </Button>
-        ))}
-      </div>
-      {numCorrect > 0 && (
-        <div>Well done you have got {numCorrect} correct in a row!</div>
-      )}
-    </div>
+    <ColorGuess game={game} handleVote={handleVote} numCorrect={numCorrect} />
   )
 }

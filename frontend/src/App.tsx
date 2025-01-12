@@ -84,8 +84,8 @@ const router = createBrowserRouter([
       {
         path: 'leaderboards',
         async lazy() {
-          const { Leaderboards } = await import('./pages/leaderboards')
-          return { Component: Leaderboards }
+          const { Leaderboard } = await import('./pages/leaderboard')
+          return { Component: Leaderboard }
         },
       },
       {
@@ -93,6 +93,13 @@ const router = createBrowserRouter([
         async lazy() {
           const { Game } = await import('./pages/game')
           return { Component: Game }
+        },
+      },
+      {
+        path: 'game/quick-play',
+        async lazy() {
+          const { QuickPlay } = await import('./pages/game')
+          return { Component: QuickPlay }
         },
       },
     ],

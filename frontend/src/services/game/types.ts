@@ -1,6 +1,5 @@
 export interface Game {
   id: number
-  userId: number
   correctColor: string
   optionOne: string
   optionTwo: string
