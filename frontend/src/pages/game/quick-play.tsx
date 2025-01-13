@@ -26,7 +26,7 @@ const createGame = (): Game => {
 }
 
 export const QuickPlay = () => {
-  const [game, setGame] = useState(createGame())
+  const [game, setGame] = useState(() => createGame())
   const [numCorrect, setNumCorrect] = useState(0)
 
   const handleVote = (guess: string) => {

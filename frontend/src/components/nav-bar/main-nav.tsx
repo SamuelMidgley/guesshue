@@ -108,13 +108,13 @@ export function MainNav() {
             </ul>
           </NavigationMenuContent>
         </NavigationMenuItem> */}
-        <NavigationMenuItem>
+        {/* <NavigationMenuItem>
           <Link to="/leaderboards">
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
               Leaderboard
             </NavigationMenuLink>
           </Link>
-        </NavigationMenuItem>
+        </NavigationMenuItem> */}
       </NavigationMenuList>
     </NavigationMenu>
   )

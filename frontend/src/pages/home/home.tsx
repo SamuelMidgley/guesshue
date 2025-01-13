@@ -33,7 +33,7 @@ export const Home = () => {
         <ConfirmDialog />
       )}
 
-      {!!data && <div>Total games played: {data}</div>}
+      {!!data && <div>Total colors guessed: {data}</div>}
     </div>
   )
 }

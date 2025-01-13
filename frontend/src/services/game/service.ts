@@ -18,5 +18,5 @@ export const getGamesPlayedService = () => {
     return Promise.resolve(mockGamesPlayed)
   }
 
-  return api.get<number>('/game/games-played').then((res) => res.data)
+  return api.get<number>('/gamestats/games-played').then((res) => res.data)
 }
