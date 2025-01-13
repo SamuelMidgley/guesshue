@@ -6,11 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GuessHueAPI.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("[controller]")]
 public class GameController(IGameService gameService, IUserHelper userHelper) : ControllerBase
 {
-    [Authorize]
     [HttpGet]
     public async Task<ActionResult<Game>> CreateGame()
     {
@@ -26,7 +26,6 @@ public class GameController(IGameService gameService, IUserHelper userHelper) : 
         return Ok(game);
     }
     
-    [Authorize]
     [HttpPost("{gameId:int}/guess")]
     public async Task<IActionResult> AddGuess(int gameId, AddGuessRequest request)
     {
@@ -40,13 +39,5 @@ public class GameController(IGameService gameService, IUserHelper userHelper) : 
         var result = await gameService.AddGuess(gameId, userId.Value, request.ColorGuess);
         
         return result ? Ok() : BadRequest();
-    }
-
-    [HttpGet("games-played")]
-    public async Task<IActionResult> GetGamesPlayed()
-    {
-        var gamesPlayed = await gameService.GetGamesPlayed();
-        
-        return Ok(gamesPlayed);
     }
 }

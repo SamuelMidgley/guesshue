@@ -1,5 +1,6 @@
 using GuessHueAPI.Models;
 using GuessHueAPI.Repositories;
+using Serilog;
 
 namespace GuessHueAPI.Services;
 
@@ -23,27 +24,27 @@ public class UserService(IUserRepository userRepository) : IUserService
 
     public async Task<User?> GetById(int id)
     {
-        try
-        {
-            var user = await userRepository.GetById(id);
+        var user = await userRepository.GetById(id);
 
-            if (user == null) throw new KeyNotFoundException("User not found");
-
-            return user;
-        }
-        catch (Exception e)
+        if (user == null)
         {
-            Console.WriteLine(e);
-            throw;
+            Log.Warning($"User with id {id} was not found");
+            throw new KeyNotFoundException("User not found");
         }
+
+        return user;
     }
 
     public async Task<User?> GetByEmail(string email)
     {
         var user = await userRepository.GetByEmail(email);
 
-        if (user == null) throw new KeyNotFoundException("User not found");
-
+        if (user == null)
+        {
+            Log.Warning($"User with email {email} was not found");
+            throw new KeyNotFoundException("User not found");
+        }
+        
         return user;
     }
 }

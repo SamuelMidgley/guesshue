@@ -11,8 +11,6 @@ public interface IGameRepository
     Task<bool> CanUserGuess(int gameId, int userId);
     
     Task<bool> AddGuess(int gameId, int userId,  string colorGuess);
-
-    Task<int> GetGamesPlayed();
 }
 
 public class GameRepository(DataContext context) : IGameRepository
@@ -77,17 +75,5 @@ public class GameRepository(DataContext context) : IGameRepository
         });
 
         return result == 1;
-    }
-
-    public async Task<int> GetGamesPlayed()
-    {
-        using var connection = context.CreateConnection();
-
-        const string sql = """
-                           SELECT count(*) 
-                           FROM guesshue.public.game
-                           """;
-        
-        return await connection.ExecuteScalarAsync<int>(sql);
     }
 }

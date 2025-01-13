@@ -6,7 +6,6 @@
       dockerfile: GuessHueAPI/Dockerfile
     ports:
       - "8080:8080"
-      - "8081:8081"
     environment:
       - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=guesshue;Username=postgres;Password=${DB_PASSWORD}
     depends_on:
@@ -39,6 +38,15 @@
       interval: 1.5s
       timeout: 5s
       retries: 5
+      
+  seq:
+    image: datalust/seq:latest
+    container_name: guesshue-seq
+    environment:
+      - ACCEPT_EULA=Y
+    ports:
+      - "5341:5341"
+      - "8081:80"
 
 volumes:
   postgres_data:

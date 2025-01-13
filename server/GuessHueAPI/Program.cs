@@ -1,22 +1,17 @@
+using GuessHueAPI.Extensions;
 using GuessHueAPI.Helpers;
-using GuessHueAPI.Repositories;
-using GuessHueAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.Configure<DbSettings>(builder.Configuration.GetSection("ConnectionStrings"));
+Serilog.Debugging.SelfLog.Enable(Console.Out);
 
-builder.Services.AddSingleton<DataContext>();
-builder.Services.AddSingleton<TokenGenerator>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IPasswordSecurityService, PasswordSecurityService>();
-builder.Services.AddScoped<IGameRepository, GameRepository>();
-builder.Services.AddScoped<IGameService, GameService>();
+builder.Host.UseSerilog((context, configuration) => 
+    configuration.ReadFrom.Configuration(context.Configuration));
+
+builder.AddInfrastructure();
 
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
@@ -25,37 +20,8 @@ builder.Services.AddCors();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
-{
-    var securityScheme = new OpenApiSecurityScheme
-    {
-        Name = "JWT Authentication",
-        Description = "Enter your JWT token in this field",
-        In = ParameterLocation.Header,
-        Type = SecuritySchemeType.Http,
-        Scheme = "bearer",
-        BearerFormat = "JWT"
-    };
+builder.ConfigureSwagger();
 
-    c.AddSecurityDefinition("Bearer", securityScheme);
-
-    var securityRequirement = new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            []
-        }
-    };
-
-    c.AddSecurityRequirement(securityRequirement);
-});
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(x =>

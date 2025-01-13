@@ -1,5 +1,6 @@
 using GuessHueAPI.Models;
 using GuessHueAPI.Repositories;
+using Serilog;
 
 namespace GuessHueAPI.Services;
 
@@ -8,8 +9,6 @@ public interface IGameService
     Task<Game> CreateGame(int userId);
     
     Task<bool> AddGuess(int gameId, int userId,  string colorGuess);
-
-    Task<int> GetGamesPlayed();
 }
 
 public class GameService(IGameRepository gameRepository) : IGameService
@@ -42,18 +41,13 @@ public class GameService(IGameRepository gameRepository) : IGameService
 
         if (!userCanGuess)
         {
-            // do some logging
+            Log.Warning($"User {userId} is not a valid guess");
             return false;
         }
         
         var success = await gameRepository.AddGuess(gameId, userId, colorGuess);
         
         return success;
-    }
-
-    public Task<int> GetGamesPlayed()
-    {
-        return gameRepository.GetGamesPlayed();
     }
 
     private static string CreateHexColor()

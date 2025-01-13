@@ -16,6 +16,7 @@ public class UserHelper: IUserHelper
 
         if (jwt == null)
         {
+            
             return null;
         }
         

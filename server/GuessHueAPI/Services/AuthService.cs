@@ -1,6 +1,7 @@
 using GuessHueAPI.Helpers;
 using GuessHueAPI.Models;
 using GuessHueAPI.Repositories;
+using Serilog;
 
 namespace GuessHueAPI.Services;
 
@@ -20,7 +21,10 @@ public class AuthService(
     {
         // Todo: Use fluent validation
         if (!await userRepository.IsUsernameOrEmailUnique(createUserRequest.Email, createUserRequest.Username))
+        {
+            Log.Warning($"User with the email {createUserRequest.Email} already exists");
             throw new ApplicationException($"User with the email {createUserRequest.Email} already exists");
+        }
 
         var (hash, salt) = passwordSecurityService.HashPassword(createUserRequest.Password);
 
@@ -41,12 +45,20 @@ public class AuthService(
     {
         var user = await userRepository.GetByEmail(loginRequest.Email);
 
-        if (user == null) throw new ApplicationException($"User with the email {loginRequest.Email} does not exist");
+        if (user == null)
+        {
+            Log.Warning($"User with the email {loginRequest.Email} does not exist");
+            throw new ApplicationException($"User with the email {loginRequest.Email} does not exist");
+        }
 
         var isPasswordValid =
             passwordSecurityService.ValidatePassword(loginRequest.Password, user.PasswordHash, user.PasswordSalt);
 
-        if (!isPasswordValid) throw new ApplicationException("Invalid email or password combination");
+        if (!isPasswordValid)
+        {
+            Log.Warning($"Invalid login attempt for user {loginRequest.Email}, password is invalid");
+            throw new ApplicationException("Invalid email or password combination");
+        }
 
         return TokenGenerator.GenerateToken(user.Id);
     }
