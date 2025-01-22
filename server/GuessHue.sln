@@ -11,6 +11,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuessHueMigrations", "GuessHueMigrations\GuessHueMigrations.csproj", "{92C98552-EFE7-4FDA-B7ED-65090395F18C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuessHueDataGeneration", "GuessHueDataGeneration\GuessHueDataGeneration.csproj", "{7F01DD05-0AB6-4E3B-94CE-EF87629AE35A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{4B5F02DB-C98C-471E-B142-C103EA018377}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,5 +29,13 @@ Global
 		{92C98552-EFE7-4FDA-B7ED-65090395F18C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{92C98552-EFE7-4FDA-B7ED-65090395F18C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{92C98552-EFE7-4FDA-B7ED-65090395F18C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F01DD05-0AB6-4E3B-94CE-EF87629AE35A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F01DD05-0AB6-4E3B-94CE-EF87629AE35A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F01DD05-0AB6-4E3B-94CE-EF87629AE35A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F01DD05-0AB6-4E3B-94CE-EF87629AE35A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4B5F02DB-C98C-471E-B142-C103EA018377}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4B5F02DB-C98C-471E-B142-C103EA018377}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B5F02DB-C98C-471E-B142-C103EA018377}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4B5F02DB-C98C-471E-B142-C103EA018377}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

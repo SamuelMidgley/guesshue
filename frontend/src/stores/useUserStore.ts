@@ -6,7 +6,7 @@ interface UserState {
 }
 
 interface UserActions {
-  setUser: (user: User) => void
+  setUser: (user: User | null) => void
 }
 
 export const useUserStore = create<UserState & UserActions>()((set) => ({

@@ -45,6 +45,14 @@ export const UserNav = () => {
 
   const { id, username, email } = data
 
+  const logOutHandler = () => {
+    // remove token from global store
+    logOut()
+
+    // clear user from global store
+    setUser(null)
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -69,7 +77,7 @@ export const UserNav = () => {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuGroup>
+        {/* <DropdownMenuGroup>
           <DropdownMenuItem asChild>
             <Link to={`/profile/${id}`}>Profile</Link>
           </DropdownMenuItem>
@@ -77,8 +85,8 @@ export const UserNav = () => {
             <Link to="/settings">Settings</Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => logOut()}>Log out</DropdownMenuItem>
+        <DropdownMenuSeparator /> */}
+        <DropdownMenuItem onClick={logOutHandler}>Log out</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )

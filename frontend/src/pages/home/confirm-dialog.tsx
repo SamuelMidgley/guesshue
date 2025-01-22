@@ -18,7 +18,7 @@ export const ConfirmDialog = () => {
   return (
     <AlertDialog>
       <AlertDialogTrigger className={buttonVariants({ size: 'lg' })}>
-        Play
+        Play game!
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>

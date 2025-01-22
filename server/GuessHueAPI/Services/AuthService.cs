@@ -14,7 +14,9 @@ public interface IAuthService
 
 public class AuthService(
     IUserRepository userRepository,
-    IPasswordSecurityService passwordSecurityService)
+    IPasswordSecurityService passwordSecurityService,
+    ITokenGenerator tokenGenerator,
+    ILogger<AuthService> logger)
     : IAuthService
 {
     public async Task<string> Register(CreateUserRequest createUserRequest)
@@ -22,7 +24,7 @@ public class AuthService(
         // Todo: Use fluent validation
         if (!await userRepository.IsUsernameOrEmailUnique(createUserRequest.Email, createUserRequest.Username))
         {
-            Log.Warning($"User with the email {createUserRequest.Email} already exists");
+            logger.LogWarning($"User with the email {createUserRequest.Email} already exists");
             throw new ApplicationException($"User with the email {createUserRequest.Email} already exists");
         }
 
@@ -38,7 +40,7 @@ public class AuthService(
 
         var newUserId = await userRepository.Create(newUser);
 
-        return TokenGenerator.GenerateToken(newUserId);
+        return tokenGenerator.GenerateJwtToken(newUserId);
     }
 
     public async Task<string> Login(LoginUserRequest loginRequest)
@@ -47,7 +49,7 @@ public class AuthService(
 
         if (user == null)
         {
-            Log.Warning($"User with the email {loginRequest.Email} does not exist");
+            logger.LogWarning($"User with the email {loginRequest.Email} does not exist");
             throw new ApplicationException($"User with the email {loginRequest.Email} does not exist");
         }
 
@@ -56,10 +58,10 @@ public class AuthService(
 
         if (!isPasswordValid)
         {
-            Log.Warning($"Invalid login attempt for user {loginRequest.Email}, password is invalid");
+            logger.LogWarning($"Invalid login attempt for user {loginRequest.Email}, password is invalid");
             throw new ApplicationException("Invalid email or password combination");
         }
 
-        return TokenGenerator.GenerateToken(user.Id);
+        return tokenGenerator.GenerateJwtToken(user.Id);
     }
 }

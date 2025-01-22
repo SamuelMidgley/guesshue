@@ -4,9 +4,14 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace GuessHueAPI.Helpers;
 
-public class TokenGenerator
+public interface ITokenGenerator
 {
-    public static string GenerateToken(int userId)
+    string GenerateJwtToken(int userId);
+}
+
+public class TokenGenerator : ITokenGenerator
+{
+    public string GenerateJwtToken(int userId)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = "fortheloveofgodstorethissecurely"u8.ToArray();

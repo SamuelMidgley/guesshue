@@ -6,8 +6,6 @@ using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-Serilog.Debugging.SelfLog.Enable(Console.Out);
-
 builder.Host.UseSerilog((context, configuration) => 
     configuration.ReadFrom.Configuration(context.Configuration));
 
@@ -51,6 +49,7 @@ if (app.Environment.IsDevelopment())
 app.UseMiddleware<ErrorHandlerMiddleware>();
 
 // app.UseHttpsRedirection();
+
 app.UseCors(x => x
     .AllowAnyMethod()
     .AllowAnyHeader()

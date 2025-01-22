@@ -1,36 +1,29 @@
-using System.IdentityModel.Tokens.Jwt;
-using Microsoft.AspNetCore.Authentication;
+using System.Security.Claims;
 
 namespace GuessHueAPI.Helpers;
 
 public interface IUserHelper
 {
-    Task<int?> GetUserIdFromHttpContext(HttpContext httpContext);
+    int? GetUserIdFromJwt(ClaimsPrincipal user);
 }
 
-public class UserHelper: IUserHelper
+public class UserHelper(ILogger<UserHelper> logger): IUserHelper
 {
-    public async Task<int?> GetUserIdFromHttpContext(HttpContext httpContext)
+    public int? GetUserIdFromJwt(ClaimsPrincipal user)
     {
-        var jwt = await httpContext.GetTokenAsync("access_token");
-
-        if (jwt == null)
-        {
-            
-            return null;
-        }
+        logger.LogInformation("Attempting to get user id from jwt");
         
-        var handler = new JwtSecurityTokenHandler();
-        var token = handler.ReadJwtToken(jwt);
+        var userIdString = user.FindFirstValue(ClaimTypes.NameIdentifier);
         
-        var result =  int.TryParse(token.Subject, out var userId);
+        var result =  int.TryParse(userIdString, out var userId);
 
         if (result)
         {
+            logger.LogInformation("User with id {userId} was retrieved from jwt", userId);
             return userId;
         }
         
-        // Log something like can't find the Id
+        logger.LogInformation("Unable to obtain user id from jwt");
         return null;
     }
 }

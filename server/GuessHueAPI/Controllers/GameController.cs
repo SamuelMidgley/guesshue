@@ -14,7 +14,7 @@ public class GameController(IGameService gameService, IUserHelper userHelper) : 
     [HttpGet]
     public async Task<ActionResult<Game>> CreateGame()
     {
-        var userId = await userHelper.GetUserIdFromHttpContext(Request.HttpContext);
+        var userId = userHelper.GetUserIdFromJwt(User);
 
         if (!userId.HasValue)
         {
@@ -29,7 +29,7 @@ public class GameController(IGameService gameService, IUserHelper userHelper) : 
     [HttpPost("{gameId:int}/guess")]
     public async Task<IActionResult> AddGuess(int gameId, AddGuessRequest request)
     {
-        var userId = await userHelper.GetUserIdFromHttpContext(Request.HttpContext);
+        var userId = userHelper.GetUserIdFromJwt(User);
 
         if (!userId.HasValue)
         {
