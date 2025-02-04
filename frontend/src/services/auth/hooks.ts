@@ -2,6 +2,7 @@ import { useMutation } from '@tanstack/react-query'
 import { loginService, registerService } from './service'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/stores/useAuthStore'
+import { AxiosError } from 'axios'
 
 export const useLoginMutation = () => {
   const navigate = useNavigate()
@@ -19,6 +20,9 @@ export const useLoginMutation = () => {
       setToken(data.token)
 
       navigate('/')
+    },
+    onError: (error: AxiosError) => {
+      console.log(error)
     },
   })
 }

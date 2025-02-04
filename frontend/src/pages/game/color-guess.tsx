@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Game } from '@/services/game/types'
 
 interface ColorGuessProps {
@@ -14,6 +15,8 @@ export const ColorGuess = ({
 }: ColorGuessProps) => {
   return (
     <div className="w-full flex flex-col gap-6 items-center mt-20">
+      <h2 className="text-3xl font-semibold">Time trials</h2>
+
       <div
         className="w-[200px] h-[200px] rounded"
         style={{ backgroundColor: game.correctColor }}
@@ -29,9 +32,23 @@ export const ColorGuess = ({
           </Button>
         ))}
       </div>
-      {numCorrect > 0 && (
-        <div>Well done you have got {numCorrect} correct in a row!</div>
-      )}
+      <div className="flex gap-5">
+        {/* <Card className="w-[150px]">
+          <CardHeader className="font-bold">Timer</CardHeader>
+          <CardContent className="text-center">00:00</CardContent>
+        </Card> */}
+        <Card className="w-[310px]">
+          <CardHeader className="font-bold">Streak</CardHeader>
+          <CardContent className="flex justify-between">
+            <div>
+              <p>x{numCorrect}</p>
+            </div>
+            <div>
+              <p>PB: 23</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   )
 }

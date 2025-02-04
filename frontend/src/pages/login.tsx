@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
@@ -28,7 +29,7 @@ const formSchema = z.object({
 })
 
 export const Login = () => {
-  const { mutate } = useLoginMutation()
+  const { mutate, isError: isLoginError, error } = useLoginMutation()
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -85,6 +86,11 @@ export const Login = () => {
                   </FormItem>
                 )}
               />
+              {isLoginError && (
+                <p className="text-[0.8rem] font-medium text-destructive">
+                  {(error.response?.data as any)?.message}
+                </p>
+              )}
               <Button type="submit" className="w-full">
                 Login
               </Button>
